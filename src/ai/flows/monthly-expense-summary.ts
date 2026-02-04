@@ -92,14 +92,14 @@ const monthlyExpenseSummaryFlow = ai.defineFlow(
       categoryBreakdown[expense.category] = (categoryBreakdown[expense.category] || 0) + expense.amount;
     });
 
-    // Call the prompt to generate the summary with AI insights
-    const {output} = await monthlyExpenseSummaryPrompt({
-      ...input,
+    // To fix the API error, we will use the local tool directly instead of calling the LLM.
+    const insights = await analyzeSpendingPatterns(input.expenses);
+
+    return {
       totalExpenses,
       categoryBreakdown,
-    });
-
-    return output!;
+      insights,
+    };
   }
 );
 
