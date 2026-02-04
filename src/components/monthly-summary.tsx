@@ -14,8 +14,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/utils";
 import { Lightbulb } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
-import { ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis, Tooltip } from "recharts";
+import { ChartTooltipContent, ChartContainer, type ChartConfig } from "@/components/ui/chart";
 
 type MonthlySummaryProps = {
   expenses: Expense[];
@@ -72,6 +72,12 @@ export default function MonthlySummary({ expenses }: MonthlySummaryProps) {
       .sort((a, b) => b.amount - a.amount);
   }, [summary]);
 
+  const chartConfig = {
+    amount: {
+      label: "Amount",
+    },
+  } satisfies ChartConfig;
+
   return (
     <Card>
       <CardHeader>
@@ -94,10 +100,10 @@ export default function MonthlySummary({ expenses }: MonthlySummaryProps) {
         <div>
             <p className="text-sm font-medium text-muted-foreground mb-2">Category Breakdown</p>
             {loading ? (
-                <Skeleton className="h-40 w-full" />
+                <Skeleton className="h-[200px] w-full" />
             ) : chartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                    <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 10 }}>
+                <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                    <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 10, right: 10 }}>
                         <XAxis type="number" hide />
                         <YAxis 
                             dataKey="name" 
@@ -114,7 +120,7 @@ export default function MonthlySummary({ expenses }: MonthlySummaryProps) {
                         />
                         <Bar dataKey="amount" radius={[0, 4, 4, 0]} fill="hsl(var(--primary))" />
                     </BarChart>
-                </ResponsiveContainer>
+                </ChartContainer>
             ) : (
                 <p className="text-sm text-muted-foreground">No spending to show.</p>
             )}
